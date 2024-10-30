@@ -45,7 +45,7 @@ class TelegramBotManager(LocaleMixin):
         @classmethod
         def exception_filter(cls, exception: Exception):
             cls.logger.exception("Exception: %s while sending request to Telegram server.", exception)
-            return isinstance(exception, telegram.error.TimedOut)
+            return isinstance(exception, telegram.error.NetworkError)
 
         @classmethod
         def retry_on_timeout(cls, fn: Callable):
