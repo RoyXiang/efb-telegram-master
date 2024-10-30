@@ -9,6 +9,7 @@ from typing import List, TYPE_CHECKING, Callable
 
 import telegram.constants
 import telegram.error
+import telegram.vendor.ptb_urllib3.urllib3.exceptions
 from retrying import retry
 from telegram import Update, InputFile, User, File
 from telegram.ext import CallbackContext, Filters, MessageHandler, Updater, Dispatcher
@@ -45,7 +46,9 @@ class TelegramBotManager(LocaleMixin):
         @classmethod
         def exception_filter(cls, exception: Exception):
             cls.logger.exception("Exception: %s while sending request to Telegram server.", exception)
-            return isinstance(exception, telegram.error.TimedOut)
+            return isinstance(exception, (telegram.error.TimedOut,
+                                          telegram.vendor.ptb_urllib3.urllib3.exceptions.TimeoutError,
+                                          TimeoutError))
 
         @classmethod
         def retry_on_timeout(cls, fn: Callable):
